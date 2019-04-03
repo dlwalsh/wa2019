@@ -19,7 +19,7 @@ class Map extends Component {
   }
 
   componentDidMount() {
-    fetch('/data/sa.topojson')
+    fetch('/data/sa1.geojson')
       .then(response => response.json())
       .then(json => this.setState({
         geodata: json,
@@ -53,34 +53,34 @@ class Map extends Component {
   loadMap(data) {
     const component = this;
     const map = L.map(this.mapRef, {
-      center: [-35, 138],
-      zoom: 7,
+      center: [-27, 121],
+      zoom: 5,
     });
-    const areaGeo = topojson.feature(data, data.objects.sa1);
-    const districtGeo = topojson.feature(data, data.objects.districts);
-    const lgaGeo = topojson.feature(data, data.objects.lga);
+    // const areaGeo = topojson.feature(data, data.objects.sa1);
+    // const districtGeo = topojson.feature(data, data.objects.districts);
+    // const lgaGeo = topojson.feature(data, data.objects.lga);
 
     L.tileLayer('http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     }).addTo(map);
 
-    L.geoJson(districtGeo, {
-      style: {
-        color: '#0099ff',
-        fillOpacity: 0,
-        weight: 3,
-      },
-    }).addTo(map);
+    // L.geoJson(districtGeo, {
+    //   style: {
+    //     color: '#0099ff',
+    //     fillOpacity: 0,
+    //     weight: 3,
+    //   },
+    // }).addTo(map);
+    //
+    // L.geoJson(lgaGeo, {
+    //   style: {
+    //     color: '#00ff00',
+    //     fillOpacity: 0,
+    //     weight: 2,
+    //   },
+    // }).addTo(map);
 
-    L.geoJson(lgaGeo, {
-      style: {
-        color: '#00ff00',
-        fillOpacity: 0,
-        weight: 2,
-      },
-    }).addTo(map);
-
-    L.geoJson(areaGeo, {
+    L.geoJson(data, {
       style: {
         color: 'red',
         fillOpacity: 0,
@@ -88,7 +88,7 @@ class Map extends Component {
       },
       onEachFeature(feature, layer) {
         const { properties } = feature;
-        layer.addEventListener('click', () => component.onLayerClick(properties.cd_id, layer));
+        layer.addEventListener('click', () => component.onLayerClick(properties.SA1_7DIG16, layer));
       },
       filter(feature) {
         return true;

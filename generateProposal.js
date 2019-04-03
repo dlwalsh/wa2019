@@ -23,7 +23,7 @@ async.parallel({
   const geodata = JSON.parse(results.geodata);
 
   const features = geodata.features.reduce((memo, feat) => {
-    const id = feat.properties.cd_id;
+    const id = feat.properties.SA1_7DIG16;
     return Object.assign(memo, {
       [id]: memo[id] ? [...memo[id], feat] : [feat],
     });

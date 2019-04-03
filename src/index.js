@@ -5,10 +5,11 @@ import App from './components/App';
 import Proposal from './components/Proposal';
 import SA1Calculator from './components/SA1Calculator';
 
-render((
+render(
   <Router history={browserHistory}>
     <Route path="/" component={App} />
     <Route path="/calculator" component={SA1Calculator} />
     <Route path="/proposal" component={Proposal} />
-  </Router>
-), document.querySelector('#app'));
+  </Router>,
+  document.querySelector('#app'),
+);

@@ -16,19 +16,20 @@ class Selections extends Component {
   }
 
   componentDidMount() {
-    fetch('/data/sa1.geojson')
+    fetch('/data/wa.geojson')
       .then(response => response.json())
-      .then(json => {
+      .then((json) => {
         this.setState({
           data: json.features.reduce(
             (memo, feat) => Object.assign(memo, {
-              [feat.properties.cd_id]: {
-                current: feat.properties.actual,
-                district: feat.properties.elect_div,
-                projected: feat.properties.projected,
+              [feat.properties.SA1_7DIG16]: {
+                electors: parseInt(feat.properties.Electors, 10),
+                district: feat.properties.District,
+                area: parseFloat(feat.properties.AREASQKM16),
               },
             })
-          , {}),
+            , {},
+          ),
         });
       });
   }
@@ -38,8 +39,8 @@ class Selections extends Component {
     const { data } = this.state;
 
     const groupedEntries = groupBy(entries, e => data[e] && data[e].district);
-    const totalCurrent = sumBy(entries, e => data[e] && data[e].current || 0);
-    const totalProjected = sumBy(entries, e => data[e] && data[e].projected || 0);
+    const totalCurrent = sumBy(entries, e => data[e] && data[e].electors || 0);
+    const totalArea = sumBy(entries, e => data[e] && data[e].area || 0);
 
     const summary = entries
       .map(x => parseInt(x, 10))
@@ -65,7 +66,7 @@ class Selections extends Component {
             <tr>
               <th>SA1</th>
               <th>Current</th>
-              <th>Projected</th>
+              <th>Area</th>
             </tr>
           </thead>
           <tfoot>
@@ -75,7 +76,7 @@ class Selections extends Component {
                 {totalCurrent}
               </td>
               <td style={{ textAlign: 'right' }}>
-                {totalProjected}
+                {totalArea.toFixed(3)}
               </td>
             </tr>
           </tfoot>
@@ -88,26 +89,30 @@ class Selections extends Component {
                 <tr key={entry}>
                   <td>{entry}</td>
                   <td style={{ textAlign: 'right' }}>
-                    {data[entry] && data[entry].current}
+                    {data[entry] && data[entry].electors}
                   </td>
                   <td style={{ textAlign: 'right' }}>
-                    {data[entry] && data[entry].projected}
+                    {data[entry] && data[entry].area.toFixed(3)}
                   </td>
                 </tr>
               ))}
               <tr>
                 <td>Subtotal</td>
                 <td style={{ textAlign: 'right' }}>
-                  {sumBy(groupedEntries[group], e => data[e] && data[e].current || 0)}
+                  {sumBy(groupedEntries[group], e => data[e] && data[e].electors || 0)}
                 </td>
                 <td style={{ textAlign: 'right' }}>
-                  {sumBy(groupedEntries[group], e => data[e] && data[e].projected || 0)}
+                  {sumBy(groupedEntries[group], e => data[e] && data[e].area || 0).toFixed(3)}
                 </td>
               </tr>
             </tbody>
           ))}
         </table>
-        <div style={{ display: 'none', position: 'absolute', top: '5px', right: '10px' }}>
+        <div
+          style={{
+            display: 'none', position: 'absolute', top: '5px', right: '10px',
+          }}
+        >
           <button type="button" onClick={clearEntries}>
             Clear all
           </button>
@@ -115,9 +120,8 @@ class Selections extends Component {
         <div>
           <h3>Summary</h3>
           <pre>
-            [{'\n'}
+            {'\n'}
             {summary.map(pair => `  [${pair.join(', ')}],\n`)}
-            ]
           </pre>
         </div>
       </div>

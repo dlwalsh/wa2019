@@ -40,7 +40,6 @@ class App extends Component {
           removeEntry={entry => this.removeEntry(entry)}
         />
         <div className="sidebar">
-          <Enrolment />
           <Selections
             clearEntries={() => this.clearEntries()}
             entries={entries}
