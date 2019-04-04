@@ -16,7 +16,7 @@ class Selections extends Component {
   }
 
   componentDidMount() {
-    fetch('/data/wa.geojson')
+    fetch('/data/sa1.geojson')
       .then(response => response.json())
       .then((json) => {
         this.setState({
