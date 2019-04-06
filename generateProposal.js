@@ -59,14 +59,15 @@ async.parallel({
     }
 
     const area = turf.area(geography) / 1000000;
-    const current = _.sumBy(districtFeatures, 'properties.actual');
-    const future = _.sumBy(districtFeatures, 'properties.projected');
+    const current = _.sumBy(districtFeatures, f => parseInt(f.properties.Electors, 10) || 0);
+    const phantom = area > 1000000 ? current * 1.6 : 0;
 
     const properties = _.pickBy({
       Name: district.name,
-      Current: numeral(current).format('0,0'),
-      Projected: numeral(future).format('0,0'),
       Area: `${numeral(Math.floor(area)).format('0,0')} sq km`,
+      Actual: numeral(current).format('0,0'),
+      Phantom: phantom,
+      Total: current + phantom,
     });
 
     cb(null, Object.assign(geography, { properties }));
@@ -77,8 +78,6 @@ async.parallel({
     const geojson = turf.featureCollection(data);
     const missing = Object.keys(features).filter(k => !features[k].count);
     const duplicates = Object.keys(features).filter(k => features[k].count > 1);
-    // const totalCurrent = data.reduce(d => d.properties.Current || 0, 0);
-    // const totalFuture = data.reduce(d => d.properties.Projected || 0, 0);
 
     if (missing.length > 0) {
       console.log('Missing SA1s\n', missing.join('\n'));
@@ -86,8 +85,6 @@ async.parallel({
     if (duplicates.length > 0) {
       console.log('Duplicate SA1s\n', duplicates.join('\n'));
     }
-    // console.log('Total current enrolment:', totalCurrent);
-    // console.log('Total projected enrolment:', totalFuture);
 
     const outFileName = path.join(__dirname, 'data/proposal.geojson');
     fs.writeFile(outFileName, JSON.stringify(geojson), (writeError) => {
