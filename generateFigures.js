@@ -31,8 +31,10 @@ async.parallel({
   }
 
   const proposal = JSON.parse(results.proposal);
-  const { data: figures } = papa.parse(results.figures.toString());
+  const { data: rawFigures } = papa.parse(results.figures.toString());
   const { features } = JSON.parse(results.geometry);
+
+  const figures = rawFigures.slice(1, -1);
 
   const areas = features.reduce((memo, f) => ({
     ...memo,
@@ -42,10 +44,23 @@ async.parallel({
   const enrolment = figures.reduce((memo, row) => {
     const id = row[5];
     const electors = parseInt(row[6], 10);
+    const category = row[0];
+
+    if (Number.isNaN(electors)) {
+      console.error('Cannot parse', row.join(' '));
+    }
+
+    if (category !== 'Agricultural' && category !== 'South West' && category !== 'Mining and Pastoral') {
+      return memo;
+    }
+
+
     return Object.assign(memo, {
       [id]: memo[id] ? memo[id] + electors : electors,
     });
   }, {});
+
+  const count = {};
 
   async.map(proposal.districts, (district, cb) => {
     const electors = district.SA1.reduce((memo, pairs) => {
@@ -54,13 +69,10 @@ async.parallel({
       if (end && end - start >= 100) {
         cb(`Invalid pair: ${start} ${end}`);
       }
-      const set = _.range(start, (end || start) + 1).map(x =>
-        // if (!enrolment[x]) {
-        //   cb(`Invalid SA1: ${x}`);
-        // // } else {
-        // //   features[x].count = (features[x].count || 0) + 1;
-        // }
-        enrolment[x] || 0);
+      const set = _.range(start, (end || start) + 1).map((x) => {
+        count[x] = (count[x] || 0) + 1;
+        return enrolment[x] || 0;
+      });
 
       const flatSet = _.flatten(set);
 
@@ -127,16 +139,16 @@ async.parallel({
       numeral(totalTotal).format('0,0'),
     ));
 
-    // const missing = Object.keys(features).filter(k => !features[k].count);
-    //
-    // if (missing.length > 0) {
-    //   console.log('Missing SA1s\n', missing.join('\n'));
-    // }
-    //
-    // const duplicates = Object.keys(features).filter(k => features[k].count > 1);
-    //
-    // if (duplicates.length > 0) {
-    //   console.log('Duplicate SA1s\n', duplicates.join('\n'));
-    // }
+    const missing = Object.keys(enrolment).filter(k => !count[k]);
+
+    if (missing.length > 0) {
+      console.log('Missing SA1s\n', missing.join('\n'));
+    }
+
+    const duplicates = Object.keys(enrolment).filter(k => count[k] > 1);
+
+    if (duplicates.length > 0) {
+      console.log('Duplicate SA1s\n', duplicates.join('\n'));
+    }
   });
 });

@@ -24,6 +24,12 @@ async.parallel({
 
   const features = geodata.features.reduce((memo, feat) => {
     const id = feat.properties.SA1_7DIG16;
+    const sa4 = parseInt(feat.properties.SA4_CODE16, 10) || 0;
+
+    if (sa4 >= 503 && sa4 <= 507) {
+      return memo;
+    }
+
     return Object.assign(memo, {
       [id]: memo[id] ? [...memo[id], feat] : [feat],
     });

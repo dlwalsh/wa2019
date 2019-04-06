@@ -99,7 +99,9 @@ class Map extends Component {
         layer.addEventListener('click', () => component.onLayerClick(properties.SA1_7DIG16, layer));
       },
       filter(feature) {
-        return true;
+        const sa4 = parseInt(feature.properties.SA4_CODE16, 10) || 0;
+
+        return sa4 < 503 || sa4 > 507;
       },
     }).addTo(this.map);
   }
