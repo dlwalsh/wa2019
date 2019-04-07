@@ -101,7 +101,7 @@ class Map extends Component {
       filter(feature) {
         const sa4 = parseInt(feature.properties.SA4_CODE16, 10) || 0;
 
-        return sa4 < 503 || sa4 > 507;
+        return sa4 >= 503 && sa4 <= 507;
       },
     }).addTo(this.map);
   }

@@ -44,16 +44,10 @@ async.parallel({
   const enrolment = figures.reduce((memo, row) => {
     const id = row[5];
     const electors = parseInt(row[6], 10);
-    const category = row[0];
 
     if (Number.isNaN(electors)) {
       console.error('Cannot parse', row.join(' '));
     }
-
-    if (category !== 'Agricultural' && category !== 'South West' && category !== 'Mining and Pastoral') {
-      return memo;
-    }
-
 
     return Object.assign(memo, {
       [id]: memo[id] ? memo[id] + electors : electors,
@@ -139,11 +133,11 @@ async.parallel({
       numeral(totalTotal).format('0,0'),
     ));
 
-    const missing = Object.keys(enrolment).filter(k => !count[k]);
-
-    if (missing.length > 0) {
-      console.log('Missing SA1s\n', missing.join('\n'));
-    }
+    // const missing = Object.keys(enrolment).filter(k => !count[k]);
+    //
+    // if (missing.length > 0) {
+    //   console.log('Missing SA1s\n', missing.join('\n'));
+    // }
 
     const duplicates = Object.keys(enrolment).filter(k => count[k] > 1);
 
