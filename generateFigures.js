@@ -133,11 +133,11 @@ async.parallel({
       numeral(totalTotal).format('0,0'),
     ));
 
-    // const missing = Object.keys(enrolment).filter(k => !count[k]);
-    //
-    // if (missing.length > 0) {
-    //   console.log('Missing SA1s\n', missing.join('\n'));
-    // }
+    const missing = Object.keys(enrolment).filter(k => !count[k]);
+
+    if (missing.length > 0) {
+      console.log('Missing SA1s\n', missing.join('\n'));
+    }
 
     const duplicates = Object.keys(enrolment).filter(k => count[k] > 1);
 
