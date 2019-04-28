@@ -39,7 +39,7 @@ class Proposal extends Component {
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     }).addTo(map);
 
-    L.geoJson(topojson.feature(data, data.objects.districts), {
+    L.geoJson(topojson.feature(data, data.objects.current), {
       style: {
         color: 'red',
         fillOpacity: 0,

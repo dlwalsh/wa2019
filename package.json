@@ -5,7 +5,7 @@
   "main": "webpack.config.js",
   "scripts": {
     "compile-map": "rm -f data/sa.topojson && geo2topo -o data/sa.topojson data/sa1.geojson data/lga.geojson data/districts.geojson",
-    "compile-proposal": "node generateProposal.js && rm -f data/redistribution.topojson && geo2topo -o data/redistribution.topojson data/proposal.geojson data/lga.geojson data/districts.geojson",
+    "compile-proposal": "node generateProposal.js && rm -f data/redistribution.topojson && geo2topo -o data/redistribution.topojson data/proposal.geojson data/lga.geojson data/current.geojson",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

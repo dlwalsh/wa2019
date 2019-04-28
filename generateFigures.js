@@ -81,7 +81,7 @@ async.parallel({
     const area = areas[district.name];
     const phantom = area > 100000 ? area * 0.015 : 0;
 
-    console.log(formatRow(district.name, 'Actual', 'Area', 'Phantom', 'Total'));
+    // console.log(formatRow(district.name, 'Actual', 'Area', 'Phantom', 'Total'));
     // _.sortBy(_.entries(featuresByOrigin), '0').forEach(([key, feat]) => {
     //   const originName = key.slice(0, 2) === 'Mc' ? key.slice(0, 2) + _.capitalize(key.slice(2)) : key;
     //   const electorsByOrigin = _.sumBy(feat, f => parseInt(f.properties.Electors, 10) || 0);
@@ -97,13 +97,12 @@ async.parallel({
     // });
 
     console.log(formatRow(
-      'Total',
+      district.name,
       numeral(current).format('0,0'),
       numeral(area).format('0,0'),
       numeral(phantom).format('0,0'),
       numeral(current + phantom).format('0,0'),
     ));
-    console.log('');
 
     const properties = _.pickBy({
       name: district.name,
